@@ -2,7 +2,7 @@
   "name": "techmiyaedtech-vtu",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://vtuupdates.techmiyedtech.com",
+  "homepage": "https://vtuupdates.techmiyaedtech.com",
   "type": "module",
   "scripts": {
     "dev": "vite",
