@@ -55,6 +55,7 @@ export const APP_CONFIG = {
    * Google Apps Script Web App URL.
    * Paste your deployed web app URL here.
    */
-  APPS_SCRIPT_URL: "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+  APPS_SCRIPT_URL:
+    "https://script.google.com/macros/s/AKfycbwuMoBWsdXZtL8gK4xaaAYgpR9mVKEy7P0T78TTOTyd9edGpNmW0_ZM_W6ShN1G2yLFvQ/exec",
 } as const;
 
