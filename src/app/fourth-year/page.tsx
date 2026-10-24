@@ -87,22 +87,39 @@ export default function FourthYearPage() {
       {/* Header */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-10">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black p-1 shadow-sm">
+          <div className="flex items-center gap-3">
+            <a
+              href="https://techmiyaedtech.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black p-1 shadow-sm transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
+              title="Visit TechMiya EdTech"
+            >
               <img
                 src="/images/techmiyaedtech_new_logo.png"
                 alt="TechMiya EdTech"
                 className="h-full w-full object-contain"
               />
-            </div>
+            </a>
 
             <div>
-              <p className="text-xl font-extrabold text-slate-900">VTUConnect</p>
-              <p className="text-sm font-semibold text-blue-900">
-                TechMiya EdTech
-              </p>
+              <Link
+                href="/"
+                className="text-xl font-extrabold text-slate-900 hover:text-blue-900 transition block"
+              >
+                VTUConnect
+              </Link>
+              <a
+                href="https://techmiyaedtech.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-blue-900 hover:underline hover:text-amber-600 transition inline-flex items-center gap-1"
+                title="Visit TechMiya EdTech"
+              >
+                TechMiya EdTech <span className="text-[10px]">↗</span>
+              </a>
             </div>
-          </Link>
+          </div>
 
           <Link
             href="/"

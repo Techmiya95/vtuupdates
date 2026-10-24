@@ -159,34 +159,51 @@ export default function Home() {
       {/* NAVIGATION */}
       <header className="relative z-20 border-b border-slate-200 bg-white">
         <div className="mx-auto flex min-h-[86px] max-w-[1500px] items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:px-12">
-          <Link
-            href="/"
-            className="flex shrink-0 items-center gap-3 sm:gap-4"
-            aria-label="VTUConnect homepage"
-          >
-            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 border border-slate-200 shadow-sm">
-              <img
-                src="/logos/vtu-logo.png"
-                alt="Visvesvaraya Technological University logo"
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black p-1 shadow-sm">
+          <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+            <Link
+              href="/"
+              className="flex items-center gap-3 group"
+              aria-label="VTUConnect homepage"
+            >
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 border border-slate-200 shadow-sm transition group-hover:border-blue-300">
+                <img
+                  src="/logos/vtu-logo.png"
+                  alt="Visvesvaraya Technological University logo"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            </Link>
+            <a
+              href="https://techmiyaedtech.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black p-1 shadow-sm transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
+              title="Visit TechMiya EdTech (https://techmiyaedtech.com/)"
+            >
               <img
                 src="/images/techmiyaedtech_new_logo.png"
                 alt="TechMiya EdTech logo"
                 className="h-full w-full object-contain"
               />
-            </div>
+            </a>
             <div>
-              <div className="text-xl font-extrabold tracking-tight sm:text-2xl text-slate-900">
+              <Link
+                href="/"
+                className="text-xl font-extrabold tracking-tight sm:text-2xl text-slate-900 hover:text-blue-900 transition block"
+              >
                 VTUConnect
-              </div>
-              <div className="text-xs font-semibold text-blue-900 sm:text-sm">
-                TechMiya EdTech
-              </div>
+              </Link>
+              <a
+                href="https://techmiyaedtech.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-semibold text-blue-900 sm:text-sm hover:underline hover:text-amber-600 transition inline-flex items-center gap-1"
+                title="Visit TechMiya EdTech"
+              >
+                TechMiya EdTech <span className="text-[10px]">↗</span>
+              </a>
             </div>
-          </Link>
+          </div>
 
           <nav className="flex items-center gap-3 sm:gap-6 lg:gap-10">
             <a
@@ -389,13 +406,19 @@ export default function Home() {
                   />
                 </div>
                 <span className="text-2xl font-light text-blue-200">×</span>
-                <div className="flex h-36 w-72 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-3 shadow-md">
+                <a
+                  href="https://techmiyaedtech.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-36 w-72 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-3 shadow-md transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
+                  title="Visit TechMiya EdTech (https://techmiyaedtech.com/)"
+                >
                   <img
                     src="/images/techmiyaedtech_new_logo.png"
                     alt="TechMiya EdTech — Tech for People"
                     className="h-full w-full object-contain"
                   />
-                </div>
+                </a>
               </div>
             </div>
           </div>

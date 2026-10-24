@@ -57,16 +57,22 @@ export default function RegistrationModal({
     setSubmitError(null);
 
     try {
-      // Submit to Google Apps Script (no-cors because Apps Script doesn't set CORS headers)
-      if (appsScriptUrl !== APPS_SCRIPT_PLACEHOLDER) {
-        const body = new FormData();
-        body.append("name", form.name.trim());
-        body.append("phone", form.phone.trim());
-        body.append("email", form.email.trim());
-        body.append("college", form.college);
-        body.append("timestamp", new Date().toISOString());
+      // Submit to Google Apps Script
+      if (appsScriptUrl && appsScriptUrl !== APPS_SCRIPT_PLACEHOLDER) {
+        const payload = {
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          college: form.college,
+          timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+        };
 
-        await fetch(appsScriptUrl, { method: "POST", body, mode: "no-cors" });
+        await fetch(appsScriptUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+          mode: "no-cors",
+        });
       }
 
       // Save locally so the popup doesn't appear again this session
@@ -132,13 +138,17 @@ export default function RegistrationModal({
             ✕
           </button>
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-lg">
-              🎓
-            </span>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-1 shadow-md">
+              <img
+                src="/images/techmiyaedtech_new_logo.png"
+                alt="TechMiya EdTech"
+                className="h-full w-full object-contain"
+              />
+            </div>
             <div>
-              <h2 className="text-lg font-bold">Access Study Materials</h2>
+              <h2 className="text-lg font-bold leading-tight">Student Registration</h2>
               <p className="text-xs text-blue-200 mt-0.5">
-                Fill in your details to unlock notes & resources
+                TechMiya EdTech · VTU Updates Portal
               </p>
             </div>
           </div>
