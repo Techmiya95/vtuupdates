@@ -20,9 +20,12 @@ export const metadata: Metadata = {
     "Stay updated with real-time VTU notifications. Access notes, question papers and study materials for CSE, ISE, ECE, EEE, ME and CE — organised by year, scheme and semester.",
   keywords: "VTU, VTU notes, VTU updates, VTU results, engineering study materials, VTU portal, TechMiya EdTech",
   icons: {
-    icon: [{ url: "/images/techmiyaedtech_new_logo.png", type: "image/png" }],
-    shortcut: "/images/techmiyaedtech_new_logo.png",
-    apple: "/images/techmiyaedtech_new_logo.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/favicon.png",
   },
   openGraph: {
     title: "VTUConnect — TechMiya EdTech",
