@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { SCHEMES, YEARS, BRANCHES, getSemesters, getSubjects } from "@/data/vtu-subjects";
 import { getDriveLink } from "@/data/drive-links";
 import { APP_CONFIG } from "@/config/app-config";
@@ -130,6 +131,32 @@ export default function StudentHub({ embedded = false }: Props) {
       id="student-hub"
       className={embedded ? "bg-[#f8f9fa]" : "min-h-screen bg-[#f8f9fa]"}
     >
+      {!embedded && (
+        <header className="border-b border-slate-200 bg-white">
+          <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-12">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-1 shadow-sm">
+                <img
+                  src="/images/techmiyaedtech_new_logo.png"
+                  alt="TechMiya EdTech"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div>
+                <p className="text-lg font-extrabold text-slate-900">VTUConnect</p>
+                <p className="text-xs font-semibold text-blue-900">TechMiya EdTech</p>
+              </div>
+            </Link>
+            <Link
+              href="/"
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50 text-slate-700"
+            >
+              ← Home
+            </Link>
+          </div>
+        </header>
+      )}
+
       {/* ── Header ─────────────────────────────────────────────────── */}
       <div
         style={{ background: "linear-gradient(135deg, #102c59 0%, #1a3d7a 100%)" }}

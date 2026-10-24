@@ -13,14 +13,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VTUConnect — VTU Student Updates & Study Materials Portal",
+  metadataBase: new URL("https://vtuupdates.techmiyaedtech.com"),
+  title: "VTUConnect — TechMiya EdTech | VTU Student Updates & Study Materials Portal",
   description:
     "Stay updated with real-time VTU notifications. Access notes, question papers and study materials for CSE, ISE, ECE, EEE, ME and CE — organised by year, scheme and semester.",
-  keywords: "VTU, VTU notes, VTU updates, VTU results, engineering study materials, VTU portal",
+  keywords: "VTU, VTU notes, VTU updates, VTU results, engineering study materials, VTU portal, TechMiya EdTech",
+  icons: {
+    icon: [{ url: "/images/techmiyaedtech_new_logo.png", type: "image/png" }],
+    shortcut: "/images/techmiyaedtech_new_logo.png",
+    apple: "/images/techmiyaedtech_new_logo.png",
+  },
   openGraph: {
-    title: "VTUConnect — VTU Student Portal",
+    title: "VTUConnect — TechMiya EdTech",
     description: "Real-time VTU notifications and semester-wise study materials",
     type: "website",
+    images: ["/images/techmiyaedtech_new_logo.png"],
   },
 };
 

@@ -161,22 +161,29 @@ export default function Home() {
         <div className="mx-auto flex min-h-[86px] max-w-[1500px] items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:px-12">
           <Link
             href="/"
-            className="flex shrink-0 items-center gap-3"
+            className="flex shrink-0 items-center gap-3 sm:gap-4"
             aria-label="VTUConnect homepage"
           >
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1">
+            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 border border-slate-200 shadow-sm">
               <img
                 src="/logos/vtu-logo.png"
                 alt="Visvesvaraya Technological University logo"
                 className="h-full w-full object-contain"
               />
             </div>
+            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black p-1 shadow-sm">
+              <img
+                src="/images/techmiyaedtech_new_logo.png"
+                alt="TechMiya EdTech logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
             <div>
-              <div className="text-xl font-extrabold tracking-tight sm:text-2xl">
+              <div className="text-xl font-extrabold tracking-tight sm:text-2xl text-slate-900">
                 VTUConnect
               </div>
-              <div className="text-xs text-slate-500 sm:text-sm">
-                Student Updates Portal
+              <div className="text-xs font-semibold text-blue-900 sm:text-sm">
+                TechMiya EdTech
               </div>
             </div>
           </Link>
@@ -382,12 +389,10 @@ export default function Home() {
                   />
                 </div>
                 <span className="text-2xl font-light text-blue-200">×</span>
-                <div className="flex h-36 w-72 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-3">
+                <div className="flex h-36 w-72 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-3 shadow-md">
                   <img
-                    src="/logos/techmiya-logo.png"
-                    alt="TechMiya Solutions — Tech for People"
-                    width={500}
-                    height={350}
+                    src="/images/techmiyaedtech_new_logo.png"
+                    alt="TechMiya EdTech — Tech for People"
                     className="h-full w-full object-contain"
                   />
                 </div>

@@ -2,6 +2,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 
 const notices = [
   {
@@ -86,25 +87,29 @@ export default function FourthYearPage() {
       {/* Header */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-10">
-          <a href="/" className="flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#102a56] font-extrabold text-white">
-              VTU
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black p-1 shadow-sm">
+              <img
+                src="/images/techmiyaedtech_new_logo.png"
+                alt="TechMiya EdTech"
+                className="h-full w-full object-contain"
+              />
             </div>
 
             <div>
-              <p className="text-xl font-extrabold">VTUConnect</p>
-              <p className="text-sm text-slate-500">
-                Student Updates Portal
+              <p className="text-xl font-extrabold text-slate-900">VTUConnect</p>
+              <p className="text-sm font-semibold text-blue-900">
+                TechMiya EdTech
               </p>
             </div>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/"
             className="shrink-0 rounded-xl border border-slate-200 px-4 py-3 font-semibold transition hover:bg-blue-50"
           >
             ← Home
-          </a>
+          </Link>
         </div>
       </header>
 
