@@ -1,28 +1,55 @@
 1:"$Sreact.fragment"
-2:"/_next/static/chunks/1wjbcpsvz2hb_.js"
-3:I[39756,["$2"],"default"]
-4:I[37457,["$2"],"default"]
-5:I[83904,["$2"],"default"]
-c:I[97367,["$2"],"OutletBoundary"]
-d:"$Sreact.suspense"
-10:"ViewportBoundary"
-11:I[97367,["$2"],"$10"]
-12:"MetadataBoundary"
-13:I[97367,["$2"],"$12"]
-14:I[27201,["$2"],"IconMark"]
-:HL["/_next/static/chunks/3sw88ed2pgvdf.css","style"]
-7:X
-a:X
-a:C
-b:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":"$0:t:t:d:r:props:children:1:props:children:props:children:0:props:notFound:0:1:props:style","children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":"$0:t:t:d:r:props:children:1:props:children:props:children:0:props:notFound:0:1:props:children:props:children:1:props:style","children":404}],["$","div",null,{"style":"$0:t:t:d:r:props:children:1:props:children:props:children:0:props:notFound:0:1:props:children:props:children:2:props:style","children":["$","h2",null,{"style":"$0:t:t:d:r:props:children:1:props:children:props:children:0:props:notFound:0:1:props:children:props:children:2:props:children:props:style","children":"This page could not be found."}]}]]}]}]],null,["$","$Lc",null,{"children":["$","$d",null,{"name":"Next.MetadataOutlet","children":"$@e"}]}]]}],"p":"$@f","v":null,"s":"$7"}}]]
-8:[["children",{"s":"/_not-found","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}]}]]}],"p":"$@9","v":"$a","s":"$7"},"c":"$Qb"}]]
-0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/3sw88ed2pgvdf.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/1wjbcpsvz2hb_.js","async":true}]],["$","html",null,{"lang":"en","className":"T19VSG_variable _8Li5zG_variable h-full antialiased","children":["$","body",null,{"className":"min-h-full flex flex-col","children":[["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}],["$","$L5",null,{}]]}]}]]}],"p":"$@6","v":null,"s":"$7"},"c":"$Q8"},"h":{"r":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L11",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L13",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$d",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"VTUConnect — TechMiya EdTech | VTU Student Updates & Study Materials Portal"}],["$","meta","1",{"name":"description","content":"Stay updated with real-time VTU notifications. Access notes, question papers and study materials for CSE, ISE, ECE, EEE, ME and CE — organised by year, scheme and semester."}],["$","meta","2",{"name":"keywords","content":"VTU, VTU notes, VTU updates, VTU results, engineering study materials, VTU portal, TechMiya EdTech"}],["$","meta","3",{"property":"og:title","content":"VTUConnect — TechMiya EdTech"}],["$","meta","4",{"property":"og:description","content":"Real-time VTU notifications and semester-wise study materials"}],["$","meta","5",{"property":"og:image","content":"https://vtuupdates.techmiyaedtech.com/images/techmiyaedtech_new_logo.png"}],["$","meta","6",{"property":"og:type","content":"website"}],["$","meta","7",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","8",{"name":"twitter:title","content":"VTUConnect — TechMiya EdTech"}],["$","meta","9",{"name":"twitter:description","content":"Real-time VTU notifications and semester-wise study materials"}],["$","meta","10",{"name":"twitter:image","content":"https://vtuupdates.techmiyaedtech.com/images/techmiyaedtech_new_logo.png"}],["$","link","11",{"rel":"shortcut icon","href":"/favicon.ico"}],["$","link","12",{"rel":"icon","href":"/favicon.ico?favicon.02ip1g34bt49i.ico","sizes":"256x256","type":"image/x-icon"}],["$","link","13",{"rel":"icon","href":"/favicon.ico","sizes":"any"}],["$","link","14",{"rel":"icon","href":"/favicon.png","type":"image/png"}],["$","link","15",{"rel":"apple-touch-icon","href":"/favicon.png"}],["$","$L14","16",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@15","v":null,"s":"$7"}},"a":"$@16","u":"$@17","b":"oxENeDT_d-LOUsgF6royU"}
-e:null
-7:300
-17:true
-7:C
-16:0
-9:"$undefined"
-6:"$undefined"
-15:"$undefined"
-f:"$undefined"
+2:"/_next/static/chunks/24ttoe9qjob3s.js"
+3:I[62808,["$2"],"default"]
+4:I[39756,["$2"],"default"]
+5:I[37457,["$2"],"default"]
+6:I[83904,["$2"],"default"]
+d:I[97367,["$2"],"OutletBoundary"]
+e:"$Sreact.suspense"
+11:"ViewportBoundary"
+12:I[97367,["$2"],"$11"]
+13:"MetadataBoundary"
+14:I[97367,["$2"],"$13"]
+:HL["/_next/static/chunks/341lhuopie2ry.css","style"]
+8:X
+b:X
+b:C
+c:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":"$0:t:t:d:r:props:children:1:props:children:1:props:children:1:props:notFound:0:1:props:style","children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":"$0:t:t:d:r:props:children:1:props:children:1:props:children:1:props:notFound:0:1:props:children:props:children:1:props:style","children":404}],["$","div",null,{"style":"$0:t:t:d:r:props:children:1:props:children:1:props:children:1:props:notFound:0:1:props:children:props:children:2:props:style","children":["$","h2",null,{"style":"$0:t:t:d:r:props:children:1:props:children:1:props:children:1:props:notFound:0:1:props:children:props:children:2:props:children:props:style","children":"This page could not be found."}]}]]}]}]],null,["$","$Ld",null,{"children":["$","$e",null,{"name":"Next.MetadataOutlet","children":"$@f"}]}]]}],"p":"$@10","v":null,"s":"$8"}}]]
+9:[["children",{"s":"/_not-found","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","template":["$","$L5",null,{}]}]]}],"p":"$@a","v":"$b","s":"$8"},"c":"$Qc"}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/341lhuopie2ry.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/24ttoe9qjob3s.js","async":true}]],["$","html",null,{"lang":"en","className":"T19VSG_variable _8Li5zG_variable h-full antialiased","children":[["$","head",null,{"children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"VTU Updates\",\"alternateName\":[\"VTUConnect\",\"VTU Student Portal\",\"VTU Updates 2026\",\"Visvesvaraya Technological University Updates\"],\"url\":\"https://vtuupdates.techmiyaedtech.com/\",\"description\":\"Get the latest VTU updates, Visvesvaraya Technological University results, exam timetables, syllabus, question papers, notifications, academic updates, and student resources.\",\"inLanguage\":\"en-IN\",\"publisher\":{\"@type\":\"Organization\",\"name\":\"TechMiya EdTech\",\"url\":\"https://techmiyaedtech.com/\",\"logo\":\"https://vtuupdates.techmiyaedtech.com/images/techmiyaedtech_new_logo.png\"}}"}}],["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"TechMiya EdTech\",\"url\":\"https://techmiyaedtech.com/\",\"logo\":\"https://vtuupdates.techmiyaedtech.com/images/techmiyaedtech_new_logo.png\",\"description\":\"Educational technology platform providing academic updates, student resources, internships, and curriculum notes.\",\"sameAs\":[\"https://techmiyaedtech.com/\",\"https://vtu.internyet.in/companies/techmiya-solutions-private-limited\"]}"}}]]}],["$","body",null,{"className":"min-h-full flex flex-col","children":[["$","$L3",null,{}],["$","$L4",null,{"parallelRouterKey":"children","template":["$","$L5",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}],["$","$L6",null,{}]]}]]}]]}],"p":"$@7","v":null,"s":"$8"},"c":"$Q9"},"h":{"r":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L12",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L14",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$e",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"VTU Updates 2026 | Results, Time Table, Syllabus & Notifications"}],["$","meta","1",{"name":"description","content":"Get the latest VTU updates, Visvesvaraya Technological University results, exam timetables, syllabus, question papers, notifications, academic updates, and student resources."}],["$","link","2",{"rel":"author","href":"https://techmiyaedtech.com"}],["$","meta","3",{"name":"author","content":"TechMiya EdTech"}],["$","meta","4",{"name":"keywords","content":"VTU Updates,VTU Results 2026,VTU Notifications,VTU Time Table 2026,VTU Exam Updates,VTU Syllabus,VTU Question Papers,Visvesvaraya Technological University Updates,VTU Results Latest News,VTU Exam Time Table,VTU Circulars and Notifications,VTU Academic Calendar,VTU Previous Year Question Papers,VTU CBCS Syllabus,VTU Engineering Results,VTU Revaluation Results,VTU Results Karnataka,VTU Exam Notifications,VTU Student Updates,VTU Important Questions,VTU Model Question Papers,VTU Semester Results,VTU Exam Preparation Resources,Latest VTU updates for engineering students,How to check VTU results online,VTU semester exam timetable 2026,Latest VTU exam notifications and circulars,VTU previous year question papers with answers,VTU engineering syllabus and study materials,Visvesvaraya Technological University latest updates,VTU results and academic notifications for students,TechMiya EdTech,VTUConnect"}],"$L15","$L16","$L17","$L18","$L19","$L1a","$L1b","$L1c","$L1d","$L1e","$L1f","$L20","$L21","$L22","$L23","$L24","$L25","$L26","$L27","$L28","$L29","$L2a","$L2b","$L2c","$L2d"]}]}],null]}],"$L2e"]}],"p":"$@2f","v":null,"s":"$8"}},"a":"$@30","u":"$@31","b":"h273z7PH5F01pMgF2nTrR"}
+32:I[27201,["$2"],"IconMark"]
+f:null
+15:["$","meta","5",{"name":"creator","content":"TechMiya EdTech"}]
+16:["$","meta","6",{"name":"publisher","content":"TechMiya EdTech"}]
+17:["$","meta","7",{"name":"robots","content":"index, follow"}]
+18:["$","meta","8",{"name":"googlebot","content":"index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"}]
+19:["$","link","9",{"rel":"canonical","href":"https://vtuupdates.techmiyaedtech.com/"}]
+1a:["$","meta","10",{"property":"og:title","content":"VTU Updates 2026 | Results, Time Table, Syllabus & Notifications"}]
+1b:["$","meta","11",{"property":"og:description","content":"Get the latest VTU updates, Visvesvaraya Technological University results, exam timetables, syllabus, question papers, notifications, academic updates, and student resources."}]
+1c:["$","meta","12",{"property":"og:url","content":"https://vtuupdates.techmiyaedtech.com/"}]
+1d:["$","meta","13",{"property":"og:site_name","content":"VTU Updates — TechMiya EdTech"}]
+1e:["$","meta","14",{"property":"og:locale","content":"en_IN"}]
+1f:["$","meta","15",{"property":"og:image","content":"https://vtuupdates.techmiyaedtech.com/images/techmiyaedtech_new_logo.png"}]
+20:["$","meta","16",{"property":"og:image:width","content":"1200"}]
+21:["$","meta","17",{"property":"og:image:height","content":"630"}]
+22:["$","meta","18",{"property":"og:image:alt","content":"VTU Updates 2026 - Visvesvaraya Technological University Portal"}]
+23:["$","meta","19",{"property":"og:type","content":"website"}]
+24:["$","meta","20",{"name":"twitter:card","content":"summary_large_image"}]
+25:["$","meta","21",{"name":"twitter:title","content":"VTU Updates 2026 | Results, Time Table, Syllabus & Notifications"}]
+26:["$","meta","22",{"name":"twitter:description","content":"Get the latest VTU updates, Visvesvaraya Technological University results, exam timetables, syllabus, question papers, notifications, academic updates, and student resources."}]
+27:["$","meta","23",{"name":"twitter:image","content":"https://vtuupdates.techmiyaedtech.com/images/techmiyaedtech_new_logo.png"}]
+28:["$","link","24",{"rel":"shortcut icon","href":"/favicon.ico"}]
+29:["$","link","25",{"rel":"icon","href":"/favicon.ico?favicon.02ip1g34bt49i.ico","sizes":"256x256","type":"image/x-icon"}]
+2a:["$","link","26",{"rel":"icon","href":"/favicon.ico","sizes":"any"}]
+2b:["$","link","27",{"rel":"icon","href":"/favicon.png","type":"image/png"}]
+2c:["$","link","28",{"rel":"apple-touch-icon","href":"/favicon.png"}]
+2d:["$","$L32","29",{}]
+2e:["$","meta",null,{"name":"next-size-adjust","content":""}]
+8:300
+31:true
+8:C
+30:0
+a:"$undefined"
+7:"$undefined"
+10:"$undefined"
+2f:"$undefined"
