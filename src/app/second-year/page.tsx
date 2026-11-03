@@ -3,6 +3,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { trackExternalClick } from "@/lib/analytics";
 
 const notices = [
   {
@@ -76,12 +77,15 @@ export default function SecondYearPage() {
               href="https://techmiyaedtech.com/"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackExternalClick("https://techmiyaedtech.com/", "SecondYear Header TechMiya Logo")}
               className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-1 shadow-sm transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
               title="Visit TechMiya EdTech"
             >
               <img
                 src="/images/techmiyaedtech_new_logo.png"
-                alt="TechMiya EdTech"
+                alt="TechMiya EdTech logo"
+                width={44}
+                height={44}
                 className="h-full w-full object-contain"
               />
             </a>
@@ -291,11 +295,40 @@ export default function SecondYearPage() {
       </section>
 
       <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-7 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <span className="font-bold text-slate-800">VTUConnect</span>
-          <span>
-            Independent student information portal · Not an official VTU website
-          </span>
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-slate-600 border-b border-slate-100 pb-5 mb-5">
+            <div className="flex flex-wrap items-center gap-4 font-medium">
+              <Link href="/" className="hover:text-blue-800 transition">← Home</Link>
+              <Link href="/first-year/" className="hover:text-blue-800 transition">First Year</Link>
+              <Link href="/third-year/" className="hover:text-blue-800 transition">Third Year</Link>
+              <Link href="/fourth-year/" className="hover:text-blue-800 transition">Fourth Year</Link>
+              <Link href="/student-hub/" className="font-bold text-blue-800">Study Hub & Notes</Link>
+            </div>
+            <div className="flex items-center gap-4 text-xs font-semibold text-blue-800">
+              <a
+                href="https://results.vtu.ac.in/"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => trackExternalClick("https://results.vtu.ac.in/", "SecondYear Footer Results")}
+                className="hover:underline"
+              >
+                VTU Results ↗
+              </a>
+              <a
+                href="https://vtu.ac.in/"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => trackExternalClick("https://vtu.ac.in/", "SecondYear Footer Official VTU")}
+                className="hover:underline"
+              >
+                Official VTU ↗
+              </a>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <span className="font-bold text-slate-800">VTUConnect · Second Year Updates</span>
+            <span>Independent student information portal · Not an official VTU website</span>
+          </div>
         </div>
       </footer>
     </main>

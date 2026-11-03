@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import StudentHub from "./student-hub/StudentHub";
+import { trackExternalClick } from "@/lib/analytics";
 
 interface VtuNotice {
   title: string;
@@ -158,8 +159,8 @@ export default function Home() {
     <main className="min-h-screen bg-white text-slate-900">
       {/* NAVIGATION */}
       <header className="relative z-20 border-b border-slate-200 bg-white">
-        <div className="mx-auto flex min-h-[86px] max-w-[1500px] items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:px-12">
-          <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+        <div className="mx-auto flex min-h-[86px] max-w-[1500px] items-center justify-between gap-4 px-4 py-4 sm:px-8 lg:px-12">
+          <div className="flex shrink-0 items-center gap-2.5 sm:gap-4">
             <Link
               href="/"
               className="flex items-center gap-3 group"
@@ -168,7 +169,9 @@ export default function Home() {
               <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 border border-slate-200 shadow-sm transition group-hover:border-blue-300">
                 <img
                   src="/logos/vtu-logo.png"
-                  alt="Visvesvaraya Technological University logo"
+                  alt="Visvesvaraya Technological University official logo"
+                  width={56}
+                  height={56}
                   className="h-full w-full object-contain"
                 />
               </div>
@@ -177,19 +180,22 @@ export default function Home() {
               href="https://techmiyaedtech.com/"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackExternalClick("https://techmiyaedtech.com/", "Header TechMiya Logo")}
               className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-black p-1 shadow-sm transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
               title="Visit TechMiya EdTech (https://techmiyaedtech.com/)"
             >
               <img
                 src="/images/techmiyaedtech_new_logo.png"
                 alt="TechMiya EdTech logo"
+                width={56}
+                height={56}
                 className="h-full w-full object-contain"
               />
             </a>
             <div>
               <Link
                 href="/"
-                className="text-xl font-extrabold tracking-tight sm:text-2xl text-slate-900 hover:text-blue-900 transition block"
+                className="text-lg font-extrabold tracking-tight sm:text-2xl text-slate-900 hover:text-blue-900 transition block"
               >
                 VTUConnect
               </Link>
@@ -197,6 +203,7 @@ export default function Home() {
                 href="https://techmiyaedtech.com/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackExternalClick("https://techmiyaedtech.com/", "Header TechMiya Link")}
                 className="text-xs font-semibold text-blue-900 sm:text-sm hover:underline hover:text-amber-600 transition inline-flex items-center gap-1"
                 title="Visit TechMiya EdTech"
               >
@@ -205,11 +212,18 @@ export default function Home() {
             </div>
           </div>
 
-          <nav className="flex items-center gap-3 sm:gap-6 lg:gap-10">
+          <nav className="flex items-center gap-2.5 sm:gap-6 lg:gap-8">
+            <Link
+              href="/student-hub/"
+              className="text-sm font-bold text-slate-800 transition hover:text-blue-700 sm:text-lg"
+            >
+              Study Hub
+            </Link>
             <a
               href="https://results.vtu.ac.in/"
               target="_blank"
               rel="noreferrer"
+              onClick={() => trackExternalClick("https://results.vtu.ac.in/", "Header - VTU Results")}
               className="text-sm font-bold transition hover:text-blue-700 sm:text-lg"
             >
               Results
@@ -218,6 +232,7 @@ export default function Home() {
               href="https://vtu.internyet.in/companies/techmiya-solutions-private-limited"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackExternalClick("https://vtu.internyet.in/companies/techmiya-solutions-private-limited", "Header - Internship")}
               className="text-sm font-bold transition hover:text-blue-700 sm:text-lg"
             >
               Internship
@@ -226,10 +241,18 @@ export default function Home() {
               href="https://vtu.ac.in/"
               target="_blank"
               rel="noreferrer"
-              className="hidden items-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold shadow-sm transition hover:border-blue-300 hover:bg-slate-50 sm:inline-flex"
+              onClick={() => trackExternalClick("https://vtu.ac.in/", "Header - Official VTU")}
+              className="hidden items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:border-blue-300 hover:bg-slate-50 sm:inline-flex"
             >
               Official VTU <span aria-hidden="true">↗</span>
             </a>
+            <Link
+              href="/admin/"
+              className="inline-flex items-center gap-1.5 rounded-2xl bg-amber-400 px-3.5 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-bold text-slate-950 shadow-sm transition hover:bg-amber-300 hover:shadow active:scale-95"
+              title="Admin Portal - Manage Subjects & Notes"
+            >
+              <span>🔐</span> Admin
+            </Link>
           </nav>
         </div>
       </header>
@@ -321,6 +344,7 @@ export default function Home() {
                       href={notice.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackExternalClick(notice.url, `Notice: ${notice.title}`)}
                       className="block rounded-2xl border border-white/15 bg-white/[0.08] p-5 shadow-lg backdrop-blur-sm transition hover:bg-white/[0.15] hover:border-white/30 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/40"
                     >
                       <div className="flex items-start gap-4">
@@ -398,10 +422,13 @@ export default function Home() {
             {/* Logo collaboration row */}
             <div className="mt-6 flex flex-col items-center justify-center py-4">
               <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:gap-8">
-                <div className="flex h-36 w-50 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-3">
+                <div className="flex h-36 w-48 max-w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-3">
                   <img
                     src="/logos/vtu-logo.png"
-                    alt="Visvesvaraya Technological University logo"
+                    alt="Visvesvaraya Technological University official logo"
+                    width={176}
+                    height={120}
+                    loading="lazy"
                     className="h-full w-full object-contain"
                   />
                 </div>
@@ -410,12 +437,16 @@ export default function Home() {
                   href="https://techmiyaedtech.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-36 w-72 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-3 shadow-md transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
+                  onClick={() => trackExternalClick("https://techmiyaedtech.com/", "Collaboration - TechMiya EdTech")}
+                  className="flex h-36 w-72 max-w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-3 shadow-md transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
                   title="Visit TechMiya EdTech (https://techmiyaedtech.com/)"
                 >
                   <img
                     src="/images/techmiyaedtech_new_logo.png"
                     alt="TechMiya EdTech — Tech for People"
+                    width={260}
+                    height={120}
+                    loading="lazy"
                     className="h-full w-full object-contain"
                   />
                 </a>
@@ -424,22 +455,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="border-t border-slate-200 bg-white px-5 py-7 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-3 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-bold text-slate-800">VTUConnect</p>
-          <p>An independent student portal, not an official VTU website.</p>
-          <a
-            href="https://vtu.ac.in/"
-            target="_blank"
-            rel="noreferrer"
-            className="font-semibold text-blue-800 hover:underline"
-          >
-            Visit official VTU ↗
-          </a>
-        </div>
-      </footer>
 
       {/* TICKER + LIVE ANIMATION */}
       <style jsx>{`
@@ -466,7 +481,174 @@ export default function Home() {
         }
       `}</style>
 
+      {/* STUDENT HUB EMBEDDED */}
       <StudentHub embedded />
+
+      {/* FOOTER */}
+      <footer className="border-t border-slate-200 bg-white px-5 py-10 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1400px]">
+          {/* Internal links grid */}
+          <div className="mb-8 grid grid-cols-1 gap-6 border-b border-slate-100 pb-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                Academic Portals
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-600">
+                <li>
+                  <Link
+                    href="/first-year/"
+                    className="hover:text-blue-800 transition"
+                  >
+                    First Year Updates (Sem 1 & 2)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/second-year/"
+                    className="hover:text-blue-800 transition"
+                  >
+                    Second Year Updates (Sem 3 & 4)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/third-year/"
+                    className="hover:text-blue-800 transition"
+                  >
+                    Third Year Updates (Sem 5 & 6)
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/fourth-year/"
+                    className="hover:text-blue-800 transition"
+                  >
+                    Fourth Year Updates (Sem 7 & 8)
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                Study Materials & Notes
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-600">
+                <li>
+                  <Link
+                    href="/student-hub/"
+                    className="hover:text-blue-800 transition"
+                  >
+                    VTU Study Hub
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/student-hub/"
+                    className="hover:text-blue-800 transition"
+                  >
+                    Engineering Branch Notes
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/student-hub/"
+                    className="hover:text-blue-800 transition"
+                  >
+                    2025, 2022 & 2021 Schemes
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                Official VTU Links
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-600">
+                <li>
+                  <a
+                    href="https://results.vtu.ac.in/"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => trackExternalClick("https://results.vtu.ac.in/", "Footer - Results")}
+                    className="hover:text-blue-800 transition inline-flex items-center gap-1"
+                  >
+                    VTU Exam Results ↗
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://vtu.ac.in/"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => trackExternalClick("https://vtu.ac.in/", "Footer - Official VTU")}
+                    className="hover:text-blue-800 transition inline-flex items-center gap-1"
+                  >
+                    Official VTU Portal ↗
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://vtu.ac.in/en/category/administration/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackExternalClick("https://vtu.ac.in/en/category/administration/", "Footer - Circulars")}
+                    className="hover:text-blue-800 transition inline-flex items-center gap-1"
+                  >
+                    Circulars & Notifications ↗
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                Student Initiatives
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-600">
+                <li>
+                  <a
+                    href="https://techmiyaedtech.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackExternalClick("https://techmiyaedtech.com/", "Footer - TechMiya")}
+                    className="hover:text-blue-800 transition inline-flex items-center gap-1"
+                  >
+                    TechMiya EdTech ↗
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://vtu.internyet.in/companies/techmiya-solutions-private-limited"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackExternalClick("https://vtu.internyet.in/companies/techmiya-solutions-private-limited", "Footer - Internship")}
+                    className="hover:text-blue-800 transition inline-flex items-center gap-1"
+                  >
+                    Internship Opportunities ↗
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom copyright line */}
+          <div className="flex flex-col gap-3 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-bold text-slate-800">VTUConnect · TechMiya EdTech</p>
+            <p>An independent student portal, not an official VTU website.</p>
+            <a
+              href="https://vtu.ac.in/"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => trackExternalClick("https://vtu.ac.in/", "Footer Bottom - Official VTU")}
+              className="font-semibold text-blue-800 hover:underline"
+            >
+              Visit official VTU ↗
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }

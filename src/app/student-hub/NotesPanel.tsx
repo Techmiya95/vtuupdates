@@ -1,6 +1,7 @@
 "use client";
 
 import { SubjectEntry } from "@/data/vtu-subjects";
+import { trackNotesAccess, trackExternalClick } from "@/lib/analytics";
 
 /** One entry = one Google Drive subject folder */
 export interface NoteLink {
@@ -35,6 +36,15 @@ export default function NotesPanel({
     );
 
   const handleOpenFolder = (noteLink: NoteLink) => {
+    trackNotesAccess({
+      year,
+      scheme,
+      branch,
+      semester,
+      subjectCode: noteLink.subjectCode,
+    });
+    trackExternalClick(noteLink.folderLink, `Drive Notes: ${noteLink.subjectCode}`);
+
     if (!isRegistered) {
       onNotesAccessRequest();
       return;
@@ -77,14 +87,14 @@ export default function NotesPanel({
         {[
           { label: "Total Subjects",  value: subjects.length,    colour: "text-slate-700"  },
           { label: "Notes Available", value: withNotes.length,   colour: "text-green-600"  },
-          { label: "Coming Soon",     value: withoutNotes.length, colour: "text-amber-600" },
+          { label: "Update Shortly",  value: withoutNotes.length, colour: "text-amber-600" },
         ].map((stat) => (
           <div
             key={stat.label}
             className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm"
           >
             <p className={`text-2xl font-extrabold ${stat.colour}`}>{stat.value}</p>
-            <p className="mt-0.5 text-xs text-slate-500">{stat.label}</p>
+            <p className="mt-0.5 text-[11px] sm:text-xs text-slate-500">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -156,9 +166,13 @@ export default function NotesPanel({
                       </span>
                     )}
 
-                    {hasLink && (
+                    {hasLink ? (
                       <span className="rounded px-1.5 py-0.5 text-[10px] font-bold bg-green-100 text-green-700">
                         ✓ Modules Available
+                      </span>
+                    ) : (
+                      <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                        ⏳ Update shortly
                       </span>
                     )}
                   </div>
@@ -186,8 +200,8 @@ export default function NotesPanel({
                     </button>
                   )
                 ) : (
-                  <span className="rounded-lg border border-dashed border-slate-300 px-3 py-2.5 text-xs text-slate-400">
-                    Coming soon
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50/70 px-3 py-2 text-xs font-medium text-amber-800">
+                    <span className="text-amber-500">⏳</span> Update shortly
                   </span>
                 )}
               </div>
@@ -198,11 +212,11 @@ export default function NotesPanel({
 
       {/* ── Empty notes state ──────────────────────────────────────── */}
       {withNotes.length === 0 && (
-        <div className="mt-6 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center">
-          <p className="text-3xl mb-3">🚧</p>
-          <p className="font-bold text-slate-700">Notes are being uploaded</p>
-          <p className="mt-1 text-xs text-slate-400">
-            Check back soon — folders will appear here as subjects are added.
+        <div className="mt-6 rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/30 p-8 text-center">
+          <p className="text-3xl mb-3">⏳</p>
+          <p className="font-bold text-slate-800">Notes will update shortly</p>
+          <p className="mt-1 text-xs text-slate-500">
+            Study notes for these subjects are being verified and uploaded. Check back soon!
           </p>
         </div>
       )}

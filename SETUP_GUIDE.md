@@ -1,157 +1,97 @@
-# VTUConnect — Admin Setup Guide
+# VTUConnect & TechMiya EdTech — Admin & Notes Management Guide
 
-## 1. Google Sheet for Notes Data
-
-### Step 1 — Create the Sheet
-Create a new Google Sheet. Name the first tab **Notes**.
-Add the following headers in **Row 1** exactly:
-
-| A | B | C | D | E | F | G | H | I |
-|---|---|---|---|---|---|---|---|---|
-| scheme | year | branch | semester | subject_code | subject_name | drive_link | file_type | description |
-
-### Step 2 — Add Notes Data
-Add rows like this example:
-
-| scheme | year | branch | semester | subject_code | subject_name | drive_link | file_type |
-|--------|------|---------|----------|-------------|-------------|-----------|---------|
-| 2025 Scheme | First Year | ALL | Physics Cycle | BMA101 | Engineering Mathematics - I | https://drive.google.com/file/d/YOUR_FILE_ID/view | PDF |
-| 2025 Scheme | First Year | ALL | Chemistry Cycle | BMA201 | Engineering Mathematics - II | https://drive.google.com/file/d/YOUR_FILE_ID/view | PDF |
-| 2025 Scheme | Second Year | Computer Science and Engineering (CSE) | Semester 3 | BCS304 | Data Structures | https://drive.google.com/file/d/YOUR_FILE_ID/view | PDF |
-
-> **Important:** The `branch` column must exactly match one of the branch names in
-> `src/data/vtu-subjects.ts`. For 1st year subjects that are common to all branches,
-> you can use `ALL` as the branch — the frontend will show them regardless of branch.
-
-### Step 3 — Publish the Sheet
-1. File → Share → **Publish to web**
-2. Select **Sheet1** (or your Notes tab)
-3. Select **Comma-separated values (.csv)**
-4. Click **Publish** → **OK**
-5. Copy the URL — it looks like:
-   `https://docs.google.com/spreadsheets/d/SHEET_ID/pub?gid=0&single=true&output=csv`
-6. Extract the `SHEET_ID` from that URL
-
-### Step 4 — Update app-config.ts
-Edit `src/config/app-config.ts`:
-```ts
-NOTES_SHEET_ID: "YOUR_ACTUAL_SHEET_ID",
-NOTES_SHEET_GID: "0",  // or the GID of your Notes tab
-USE_LIVE_SHEET: true,  // ← flip this to true
-```
+This project includes a **Google Drive & Notes Automation System** powered by a single Google Apps Script and an **Admin Portal** on the website.
 
 ---
 
-## 2. Google Apps Script for Student Registrations
+## 🔐 1. Admin Portal Login & Access
 
-### Step 1 — Create the Registration Sheet
-Create a second tab in the same (or a different) Google Sheet called **Registrations**.
-Headers in Row 1:
+- **Website URL:** Main Homepage or `/admin/`
+- **Location:** Header navbar, right after `Official VTU ↗`
+- **Username / Email:** `techmiyaedtech@gmail.com`
+- **Password:** `Techmiya@786`
 
-| A | B | C | D | E |
-|---|---|---|---|---|
-| name | phone | email | college | timestamp |
-
-### Step 2 — Create the Apps Script
-1. Open your Google Sheet → **Extensions → Apps Script**
-2. Delete the default code and paste this:
-
-```javascript
-function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet()
-    .getSheetByName("Registrations");
-
-  const params = e.parameter;
-  sheet.appendRow([
-    params.name    || "",
-    params.phone   || "",
-    params.email   || "",
-    params.college || "",
-    params.timestamp || new Date().toISOString(),
-  ]);
-
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: "ok" }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-```
-
-3. Click **Save** (floppy disk icon)
-
-### Step 3 — Deploy as Web App
-1. Click **Deploy → New deployment**
-2. Click the gear icon next to **Type** → select **Web app**
-3. Set:
-   - **Execute as:** Me
-   - **Who has access:** Anyone
-4. Click **Deploy**
-5. Copy the **Web app URL** — it looks like:
-   `https://script.google.com/macros/s/AKfycb.../exec`
-
-### Step 4 — Update app-config.ts
-```ts
-APPS_SCRIPT_URL: "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec",
-```
+### Admin Features:
+1. **📤 Upload Notes to Google Drive:**
+   - Select Scheme, Year, Branch, Semester, and Subject.
+   - Choose notes file (PDF, PPT, DOC, ZIP) from your computer.
+   - Upload directly to Google Drive via the Apps Script Web App.
+   - The website automatically changes that subject from **"⏳ Update shortly"** to **"✓ Modules Available / 📂 Open Folder"**!
+2. **➕ Add VTU Subject:**
+   - Add new subjects per scheme, year, branch, and semester according to VTU syllabus.
+   - Automatically creates the corresponding subject folder in Google Drive.
+   - Instantly shows up on the website for students!
+3. **📁 Direct Drive Links & Directory Manager:**
+   - View all subjects per semester with their live status.
+   - Paste existing Drive links directly or open folders in 1 click.
+4. **⚙️ Google Apps Script & Drive Generator:**
+   - 1-click button to generate the complete Google Drive folder tree.
+   - Update Apps Script Web App URL without editing code.
 
 ---
 
-## 3. Uploading Notes to Google Drive
+## ☁️ 2. Google Apps Script Setup (google-apps-script.js)
 
-1. Upload your PDF/PPT/DOC file to Google Drive
-2. Right-click the file → **Share** → set to **Anyone with the link can view**
-3. Copy the share link (e.g. `https://drive.google.com/file/d/FILE_ID/view?usp=sharing`)
-4. Paste the link into the `drive_link` column of your Notes sheet
-5. The site auto-refreshes and shows the note link to students
+The complete script is available in your repository: [`vtuupdates/google-apps-script.js`](./google-apps-script.js).
 
-### Supported file types
-The viewer auto-detects the type from the `file_type` column:
-- `PDF` — opens in Google Drive PDF viewer
-- `PPT` / `PPTX` — opens in Google Slides viewer
-- `DOC` / `DOCX` — opens in Google Docs viewer
-- `ZIP` — downloads automatically
-- `VIDEO` / `MP4` — opens in Drive player
-- `YT` — YouTube link (opens in YouTube)
+### Step-by-Step Deployment:
+
+1. Go to [Google Drive](https://drive.google.com).
+2. Create or open a Google Sheet (e.g. `VTUConnect Master Database`).
+3. Click **Extensions → Apps Script**.
+4. Delete all existing code in `Code.gs` and paste the contents of [`google-apps-script.js`](./google-apps-script.js).
+5. Click **Save** (floppy disk icon).
+6. **(Optional 1-Click Folder Setup):**
+   - In the Apps Script toolbar, select the function `createDriveFolderStructure` and click **Run**.
+   - Review permissions and click **Allow**.
+   - This will automatically create the entire folder structure in your Google Drive under `VTUConnect_Study_Notes`:
+     ```
+     VTUConnect_Study_Notes/
+     ├── 2025 Scheme/
+     │   ├── First Year/
+     │   │   ├── Physics Cycle/
+     │   │   └── Chemistry Cycle/
+     │   └── Computer Science and Engineering (CSE)/
+     │       ├── Semester 3/
+     │       ├── Semester 4/
+     │       └── ...
+     ├── 2022 Scheme/
+     ├── 2021 Scheme/
+     └── 2018 Scheme/
+     ```
+7. Click **Deploy → New deployment**.
+8. Select Type: **Web app** (gear icon).
+9. Configure:
+   - **Description:** `VTUConnect Notes & Portal API`
+   - **Execute as:** `Me` (your Google account)
+   - **Who has access:** `Anyone` (CRITICAL: Must be "Anyone" so students and the admin portal can upload & fetch notes)
+10. Click **Deploy** → **Authorize access** → Select your account → Click **Advanced** → **Go to Untitled project (unsafe)** → **Allow**.
+11. Copy the **Web app URL** (ends in `/exec`).
+12. Paste the URL into:
+    - **Option A:** The Admin Portal under **Settings → Google Apps Script Web App URL** → Click **Save URL**.
+    - **Option B:** `src/config/app-config.ts` in the `APPS_SCRIPT_URL` field.
 
 ---
 
-## 4. Deploy to GitHub Pages
+## 📂 3. How Notes Reflect on the Website
 
-### First time setup
+- **If notes are NOT uploaded yet:**
+  - The subject shows: **`⏳ Update shortly`**
+  - Keeps students informed that notes are in progress.
+- **When notes ARE uploaded:**
+  - The subject shows: **`✓ Modules Available`** and **`📂 Open Folder`**
+  - Registered students can click to view and download all PDFs from Google Drive.
+  - Non-registered students get a prompt to register free once.
+
+---
+
+## 🚀 4. Deploying Updates to GitHub Pages
+
+Whenever you make frontend changes or deploy the website:
+
 ```bash
-# Install gh-pages
-npm install -D gh-pages
-
-# Add remote if not already done
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-
-# Deploy
+# Build and deploy to GitHub Pages
 npm run deploy
 ```
 
-### Every time you update content
-```bash
-npm run deploy
-```
-
-This will:
-1. Run `next build` (generates the `out/` static folder)
-2. Push `out/` to the `gh-pages` branch
-3. GitHub Pages serves it automatically
-
-### GitHub Pages settings (do once on GitHub.com)
-1. Go to your repo on GitHub → **Settings → Pages**
-2. Source: **Deploy from a branch**
-3. Branch: **gh-pages** / **/ (root)**
-4. Save
-
----
-
-## 5. Custom Domain Setup (optional)
-
-1. Edit `public/CNAME` — replace the domain with yours
-2. At your domain registrar, add a DNS record:
-   - Type: `CNAME`
-   - Host: `@` (or `www`)
-   - Value: `yourusername.github.io`
-3. On GitHub → Settings → Pages → Custom domain: enter your domain
-4. Enable **Enforce HTTPS** (may take up to 24h for DNS to propagate)
+The site will automatically build and publish to GitHub Pages / custom domain.

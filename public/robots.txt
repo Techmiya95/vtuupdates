@@ -1,0 +1,6 @@
+# Robots.txt for VTU Updates (https://vtuupdates.techmiyaedtech.com/)
+User-agent: *
+Allow: /
+
+# XML Sitemap
+Sitemap: https://vtuupdates.techmiyaedtech.com/sitemap.xml

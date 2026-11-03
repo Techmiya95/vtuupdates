@@ -2,11 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { SCHEMES, YEARS, BRANCHES, getSemesters, getSubjects } from "@/data/vtu-subjects";
-import { getDriveLink } from "@/data/drive-links";
+import { SCHEMES, YEARS, BRANCHES, getSemesters } from "@/data/vtu-subjects";
+import {
+  getMergedSubjects,
+  getEffectiveDriveLink,
+  fetchNotesFromAppsScript,
+} from "@/lib/notes-store";
 import { APP_CONFIG } from "@/config/app-config";
 import RegistrationModal, { StudentData } from "./RegistrationModal";
 import NotesPanel, { NoteLink } from "./NotesPanel";
+import { trackExternalClick } from "@/lib/analytics";
 
 interface Props {
   embedded?: boolean;
@@ -58,8 +63,28 @@ export default function StudentHub({ embedded = false }: Props) {
   const semesterRef = useRef<HTMLDivElement>(null);
   const notesRef    = useRef<HTMLDivElement>(null);
 
+  const [, setDataVersion]     = useState(0);
+
   useEffect(() => {
     if (localStorage.getItem("vtu_registered") === "true") setIsRegistered(true);
+
+    // Sync latest notes and subjects dynamically from Google Apps Script
+    fetchNotesFromAppsScript().then((updated) => {
+      if (updated) setDataVersion((v) => v + 1);
+    });
+
+    // Listen to changes from Admin portal or other tabs
+    const onStorage = (e: StorageEvent) => {
+      if (
+        e.key === "vtu_custom_subjects_v1" ||
+        e.key === "vtu_dynamic_notes_v1" ||
+        e.key === "vtu_custom_apps_script_url"
+      ) {
+        setDataVersion((v) => v + 1);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   /* ── Helpers ───────────────────────────────────────────────────────── */
@@ -105,16 +130,16 @@ export default function StudentHub({ embedded = false }: Props) {
     : [];
 
   const subjects = selectedSemester
-    ? getSubjects(selectedScheme, selectedYear, selectedBranch, selectedSemester)
+    ? getMergedSubjects(selectedScheme, selectedYear, selectedBranch, selectedSemester)
     : [];
 
   /**
-   * Build noteLinks by reading drive-links.ts directly (no Google Sheet fetch).
+   * Build noteLinks combining static drive-links.ts + dynamic links from Google Apps Script / Admin.
    * Each entry maps a subject code to its Google Drive subject folder URL.
    */
   const noteLinks: NoteLink[] = subjects
     .map((s) => {
-      const link = getDriveLink(
+      const link = getEffectiveDriveLink(
         selectedScheme,
         selectedYear,
         selectedBranch,
@@ -139,12 +164,15 @@ export default function StudentHub({ embedded = false }: Props) {
                 href="https://techmiyaedtech.com/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackExternalClick("https://techmiyaedtech.com/", "StudentHub Standalone TechMiya Logo")}
                 className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-1 shadow-sm transition hover:scale-105 hover:ring-2 hover:ring-amber-400 cursor-pointer"
                 title="Visit TechMiya EdTech"
               >
                 <img
                   src="/images/techmiyaedtech_new_logo.png"
-                  alt="TechMiya EdTech"
+                  alt="TechMiya EdTech logo"
+                  width={44}
+                  height={44}
                   className="h-full w-full object-contain"
                 />
               </a>
@@ -166,12 +194,20 @@ export default function StudentHub({ embedded = false }: Props) {
                 </a>
               </div>
             </div>
-            <Link
-              href="/"
-              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50 text-slate-700"
-            >
-              ← Home
-            </Link>
+            <div className="flex items-center gap-2.5">
+              <Link
+                href="/admin/"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-amber-400 px-3.5 py-2 text-xs font-bold text-slate-950 shadow-sm hover:bg-amber-300 transition active:scale-95"
+              >
+                <span>🔐</span> Admin
+              </Link>
+              <Link
+                href="/"
+                className="rounded-xl border border-slate-200 px-4 py-2 text-xs sm:text-sm font-semibold hover:bg-slate-50 text-slate-700 transition"
+              >
+                ← Home
+              </Link>
+            </div>
           </div>
         </header>
       )}
@@ -298,6 +334,7 @@ export default function StudentHub({ embedded = false }: Props) {
                     href={l.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackExternalClick(l.url, `StudentHub QuickLink: ${l.label}`)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors border-b border-gray-50"
                   >
                     <span>{l.icon}</span>
@@ -537,7 +574,13 @@ export default function StudentHub({ embedded = false }: Props) {
               <div className="flex items-center justify-between px-3 py-1.5 border-b border-gray-100 bg-white">
                 <span className="text-[9px] text-gray-400 font-semibold uppercase tracking-wide">Sponsored</span>
               </div>
-              <a href="https://results.vtu.ac.in/" target="_blank" rel="noopener noreferrer" className="block p-4 bg-white hover:bg-gray-50 transition">
+              <a
+                href="https://results.vtu.ac.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackExternalClick("https://results.vtu.ac.in/", "StudentHub Sidebar: Results")}
+                className="block p-4 bg-white hover:bg-gray-50 transition"
+              >
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">📊</span>
                   <div>
@@ -554,7 +597,13 @@ export default function StudentHub({ embedded = false }: Props) {
               <div className="flex items-center justify-between px-3 py-1.5 border-b border-gray-100 bg-white">
                 <span className="text-[9px] text-gray-400 font-semibold uppercase tracking-wide">Sponsored</span>
               </div>
-              <a href="https://vtu.internyet.in/companies/techmiya-solutions-private-limited" target="_blank" rel="noopener noreferrer" className="block p-4 bg-white hover:bg-gray-50 transition">
+              <a
+                href="https://vtu.internyet.in/companies/techmiya-solutions-private-limited"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackExternalClick("https://vtu.internyet.in/companies/techmiya-solutions-private-limited", "StudentHub Sidebar: Internships")}
+                className="block p-4 bg-white hover:bg-gray-50 transition"
+              >
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">💼</span>
                   <div>
@@ -602,6 +651,57 @@ export default function StudentHub({ embedded = false }: Props) {
           onClose={() => setShowRegistration(false)}
           appsScriptUrl={APP_CONFIG.APPS_SCRIPT_URL}
         />
+      )}
+
+      {/* Standalone Footer */}
+      {!embedded && (
+        <footer className="border-t border-slate-200 bg-white px-5 py-8 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1500px]">
+            <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-slate-600 border-b border-slate-100 pb-6 mb-6">
+              <div className="flex flex-wrap items-center gap-4 font-medium">
+                <Link href="/" className="hover:text-blue-800 transition">Home</Link>
+                <Link href="/first-year/" className="hover:text-blue-800 transition">First Year</Link>
+                <Link href="/second-year/" className="hover:text-blue-800 transition">Second Year</Link>
+                <Link href="/third-year/" className="hover:text-blue-800 transition">Third Year</Link>
+                <Link href="/fourth-year/" className="hover:text-blue-800 transition">Fourth Year</Link>
+                <Link href="/student-hub/" className="font-bold text-blue-800">Study Hub</Link>
+              </div>
+              <div className="flex items-center gap-4 text-xs font-semibold text-blue-800">
+                <a
+                  href="https://results.vtu.ac.in/"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => trackExternalClick("https://results.vtu.ac.in/", "StudentHub Footer Results")}
+                  className="hover:underline"
+                >
+                  Results ↗
+                </a>
+                <a
+                  href="https://vtu.ac.in/"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => trackExternalClick("https://vtu.ac.in/", "StudentHub Footer Official VTU")}
+                  className="hover:underline"
+                >
+                  Official VTU ↗
+                </a>
+                <a
+                  href="https://techmiyaedtech.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => trackExternalClick("https://techmiyaedtech.com/", "StudentHub Footer TechMiya")}
+                  className="hover:underline"
+                >
+                  TechMiya EdTech ↗
+                </a>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-bold text-slate-800">VTUConnect · TechMiya EdTech</p>
+              <p>Independent student portal · Notes and resources are organized for engineering students.</p>
+            </div>
+          </div>
+        </footer>
       )}
     </section>
   );

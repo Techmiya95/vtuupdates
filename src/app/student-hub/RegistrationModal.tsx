@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { SORTED_VTU_COLLEGES } from "@/data/vtu-colleges";
+import { trackRegistrationSubmit, trackConversion, trackEvent } from "@/lib/analytics";
 
 export interface StudentData {
   name: string;
@@ -23,6 +24,10 @@ export default function RegistrationModal({
   onClose,
   appsScriptUrl = APPS_SCRIPT_PLACEHOLDER,
 }: RegistrationModalProps) {
+  useEffect(() => {
+    trackEvent("registration_modal_open", { trigger: "student_popup" });
+  }, []);
+
   const [form, setForm] = useState<StudentData>({
     name: "",
     phone: "",
@@ -79,11 +84,19 @@ export default function RegistrationModal({
       localStorage.setItem("vtu_registered", "true");
       localStorage.setItem("vtu_user", JSON.stringify(form));
 
+      // Track registration submission (SEM lead & conversion)
+      trackRegistrationSubmit({ college: form.college });
+      trackConversion();
+
       onSuccess(form);
     } catch {
       // no-cors responses always throw but the sheet still gets the data
       localStorage.setItem("vtu_registered", "true");
       localStorage.setItem("vtu_user", JSON.stringify(form));
+
+      trackRegistrationSubmit({ college: form.college });
+      trackConversion();
+
       onSuccess(form);
     } finally {
       setSubmitting(false);
@@ -124,12 +137,12 @@ export default function RegistrationModal({
   return (
     /* Backdrop */
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 overflow-hidden">
+      <div className="relative w-full max-w-md max-h-[92vh] flex flex-col rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 overflow-hidden my-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#102c59] to-[#1a3d7a] px-6 py-5 text-white">
+        <div className="shrink-0 bg-gradient-to-r from-[#102c59] to-[#1a3d7a] px-5 py-4 sm:px-6 sm:py-5 text-white relative">
           <button
             onClick={onClose}
             className="absolute right-4 top-4 text-white/60 hover:text-white transition text-xl leading-none"
@@ -141,7 +154,9 @@ export default function RegistrationModal({
             <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black p-1 shadow-md">
               <img
                 src="/images/techmiyaedtech_new_logo.png"
-                alt="TechMiya EdTech"
+                alt="TechMiya EdTech logo"
+                width={44}
+                height={44}
                 className="h-full w-full object-contain"
               />
             </div>
@@ -154,8 +169,8 @@ export default function RegistrationModal({
           </div>
         </div>
 
-        {/* Form */}
-        <div className="px-6 py-5 space-y-4">
+        {/* Form Body - scrollable */}
+        <div className="overflow-y-auto px-5 py-4 sm:px-6 sm:py-5 space-y-3.5 sm:space-y-4">
           {field("name", "Full Name", "e.g. Mohammed Ibrahim")}
           {field("phone", "Mobile Number", "10-digit mobile number", "tel")}
           {field("email", "Email Address", "you@example.com", "email")}
@@ -218,7 +233,7 @@ export default function RegistrationModal({
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-100 px-6 py-3 text-center">
+        <div className="shrink-0 border-t border-slate-100 px-6 py-3 text-center bg-slate-50">
           <p className="text-xs text-slate-400">
             🔒 Secure · For VTU students only · Free access
           </p>

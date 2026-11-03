@@ -57,5 +57,24 @@ export const APP_CONFIG = {
    */
   APPS_SCRIPT_URL:
     "https://script.google.com/macros/s/AKfycbwuMoBWsdXZtL8gK4xaaAYgpR9mVKEy7P0T78TTOTyd9edGpNmW0_ZM_W6ShN1G2yLFvQ/exec",
+
+  /**
+   * Google Analytics 4 Measurement ID (e.g. G-XXXXXXXXXX).
+   * Leave empty or set NEXT_PUBLIC_GA_MEASUREMENT_ID in your environment.
+   */
+  GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "",
+
+  /**
+   * Google Tag Manager Container ID (e.g. GTM-XXXXXXX).
+   * Leave empty or set NEXT_PUBLIC_GTM_ID in your environment.
+   */
+  GTM_ID: process.env.NEXT_PUBLIC_GTM_ID || "",
+
+  /**
+   * Google Ads Conversion Tracking ID / Label (e.g. AW-XXXXXXXXX/YYYYYYYYYYYYYYYYYYY).
+   * Leave empty or set NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID in your environment.
+   */
+  GOOGLE_ADS_CONVERSION_ID:
+    process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID || "",
 } as const;
 
