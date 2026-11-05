@@ -96,22 +96,42 @@ function doPost(e) {
       return handleStudentRegistration(data);
     }
 
-    // 2. Upload Note File from system
+    // 2. Query Notes & Subjects (supports POST as well as GET)
+    if (action === "getNotes") {
+      var notesMap = getNotesRegistry();
+      var customSubjects = getStoredSubjects();
+      return jsonResponse({
+        status: "success",
+        notes: notesMap,
+        subjects: customSubjects,
+        rootFolderUrl: getRootFolderUrl()
+      });
+    }
+
+    if (action === "checkStatus") {
+      return jsonResponse({
+        status: "success",
+        rootFolderUrl: getRootFolderUrl(),
+        message: "VTUConnect Google Apps Script is active and connected!"
+      });
+    }
+
+    // 3. Upload Note File from system
     if (action === "uploadFile") {
       return handleFileUpload(data);
     }
 
-    // 3. Add Custom Subject
+    // 4. Add Custom Subject
     if (action === "addSubject") {
       return handleAddSubject(data);
     }
 
-    // 4. Set or Update Drive Link for a Subject
+    // 5. Set or Update Drive Link for a Subject
     if (action === "setDriveLink") {
       return handleSetDriveLink(data);
     }
 
-    // 5. Create Entire Drive Folder Structure
+    // 6. Create Entire Drive Folder Structure
     if (action === "createStructure") {
       var root = createDriveFolderStructure();
       return jsonResponse({

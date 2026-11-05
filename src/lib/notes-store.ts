@@ -274,11 +274,22 @@ export function getEffectiveDriveLink(
 
 /**
  * Fetch latest notes map from Google Apps Script Web App
+ * Supports both GET and POST requests for maximum compatibility.
  */
 export async function fetchNotesFromAppsScript(): Promise<boolean> {
   const scriptUrl = getActiveAppsScriptUrl();
   if (!scriptUrl) return false;
 
+  interface ApiResponse {
+    status?: string;
+    notes?: DynamicNotesMap;
+    subjects?: CustomSubject[];
+    [key: string]: unknown;
+  }
+
+  let data: ApiResponse | null = null;
+
+  // 1. Try GET request
   try {
     const url = new URL(scriptUrl);
     url.searchParams.set("action", "getNotes");
@@ -289,60 +300,88 @@ export async function fetchNotesFromAppsScript(): Promise<boolean> {
       mode: "cors",
     });
 
-    if (!res.ok) return false;
-    const data = await res.json();
-
-    if (data && data.status === "success" && data.notes) {
-      // Merge with existing local notes
-      const existing = getDynamicNotesMap();
-      const incoming: DynamicNotesMap = data.notes;
-
-      // Deep merge
-      for (const scheme of Object.keys(incoming)) {
-        if (!existing[scheme]) existing[scheme] = {};
-        for (const branch of Object.keys(incoming[scheme])) {
-          if (!existing[scheme][branch]) existing[scheme][branch] = {};
-          for (const sem of Object.keys(incoming[scheme][branch])) {
-            if (!existing[scheme][branch][sem]) existing[scheme][branch][sem] = {};
-            for (const code of Object.keys(incoming[scheme][branch][sem])) {
-              existing[scheme][branch][sem][code.toUpperCase()] =
-                incoming[scheme][branch][sem][code];
-            }
-          }
-        }
+    if (res.ok) {
+      const text = await res.text();
+      try {
+        data = JSON.parse(text);
+      } catch {
+        // If Google Apps Script returned HTML error or redirect, fallback to POST
       }
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_DYNAMIC_NOTES, JSON.stringify(existing));
-      }
-
-      // Also if subjects are returned
-      if (data.subjects && Array.isArray(data.subjects)) {
-        const localCustom = getCustomSubjects();
-        const mergedCustom = [...localCustom];
-        for (const sub of data.subjects) {
-          const exists = mergedCustom.some(
-            (s) =>
-              s.scheme === sub.scheme &&
-              s.year === sub.year &&
-              s.branch === sub.branch &&
-              s.semester === sub.semester &&
-              s.code.toUpperCase() === sub.code.toUpperCase()
-          );
-          if (!exists) {
-            mergedCustom.push(sub);
-          }
-        }
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_CUSTOM_SUBJECTS, JSON.stringify(mergedCustom));
-        }
-      }
-
-      return true;
     }
   } catch (err) {
-    console.warn("Could not sync from Google Apps Script:", err);
+    console.warn("GET getNotes attempt failed, falling back to POST:", err);
   }
+
+  // 2. If GET did not succeed, try POST request fallback
+  if (!data || data.status !== "success") {
+    try {
+      const res = await fetch(scriptUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getNotes" }),
+      });
+      if (res.ok) {
+        const text = await res.text();
+        try {
+          data = JSON.parse(text);
+        } catch {
+          // not JSON
+        }
+      }
+    } catch (err) {
+      console.warn("POST getNotes fallback attempt failed:", err);
+    }
+  }
+
+  if (data && data.status === "success" && data.notes) {
+    // Merge with existing local notes
+    const existing = getDynamicNotesMap();
+    const incoming: DynamicNotesMap = data.notes;
+
+    // Deep merge
+    for (const scheme of Object.keys(incoming)) {
+      if (!existing[scheme]) existing[scheme] = {};
+      for (const branch of Object.keys(incoming[scheme])) {
+        if (!existing[scheme][branch]) existing[scheme][branch] = {};
+        for (const sem of Object.keys(incoming[scheme][branch])) {
+          if (!existing[scheme][branch][sem]) existing[scheme][branch][sem] = {};
+          for (const code of Object.keys(incoming[scheme][branch][sem])) {
+            existing[scheme][branch][sem][code.toUpperCase()] =
+              incoming[scheme][branch][sem][code];
+          }
+        }
+      }
+    }
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_DYNAMIC_NOTES, JSON.stringify(existing));
+    }
+
+    // Also if subjects are returned
+    if (data.subjects && Array.isArray(data.subjects)) {
+      const localCustom = getCustomSubjects();
+      const mergedCustom = [...localCustom];
+      for (const sub of data.subjects) {
+        const exists = mergedCustom.some(
+          (s) =>
+            s.scheme === sub.scheme &&
+            s.year === sub.year &&
+            s.branch === sub.branch &&
+            s.semester === sub.semester &&
+            s.code.toUpperCase() === sub.code.toUpperCase()
+        );
+        if (!exists) {
+          mergedCustom.push(sub);
+        }
+      }
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_CUSTOM_SUBJECTS, JSON.stringify(mergedCustom));
+      }
+    }
+
+    return true;
+  }
+
   return false;
 }
 
