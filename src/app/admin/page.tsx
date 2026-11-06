@@ -8,6 +8,7 @@ import {
   getEffectiveDriveLink,
   setSubjectDriveLink,
   removeSubjectDriveLink,
+  deleteNoteFromCloudAndLocal,
   addCustomSubject,
   getCustomSubjects,
   deleteCustomSubject,
@@ -244,6 +245,33 @@ export default function AdminPage() {
       showToast(`Drive link updated for ${code}!`, "success");
     }
     triggerRefresh();
+  }
+
+  /* ── Delete Note from Frontend & Cloud ──────────────────────────────── */
+  async function handleDeleteNoteClick(code: string) {
+    if (
+      !confirm(
+        `Are you sure you want to delete notes for ${code}?\n\nThe status will immediately revert to '⏳ Update shortly' on the main website.`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const res = await deleteNoteFromCloudAndLocal({
+        scheme: selectedScheme,
+        year: selectedYear,
+        branch: selectedBranch,
+        semester: selectedSemester,
+        subjectCode: code,
+        deleteDriveFiles: false,
+      });
+      showToast(res.message || `Deleted notes for ${code}`, "success");
+      triggerRefresh();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      showToast("Error deleting note: " + msg, "error");
+    }
   }
 
   /* ── Generate Google Drive Hierarchy ───────────────────────────────── */
@@ -803,22 +831,11 @@ export default function AdminPage() {
                           </a>
                           <button
                             type="button"
-                            onClick={() => {
-                              if (confirm(`Remove notes link for ${sub.code}? It will return to 'Update shortly'.`)) {
-                                removeSubjectDriveLink(
-                                  selectedScheme,
-                                  selectedYear,
-                                  selectedBranch,
-                                  selectedSemester,
-                                  sub.code
-                                );
-                                triggerRefresh();
-                                showToast(`Removed link for ${sub.code}`, "info");
-                              }
-                            }}
-                            className="text-[10px] text-red-600 hover:underline"
+                            onClick={() => handleDeleteNoteClick(sub.code)}
+                            className="text-[10px] text-red-600 hover:text-red-800 font-bold inline-flex items-center gap-0.5"
+                            title="Delete note and revert to Update shortly"
                           >
-                            Remove
+                            🗑️ Delete Note
                           </button>
                         </div>
                       )}
@@ -1046,27 +1063,39 @@ export default function AdminPage() {
                           />
                         </td>
                         <td className="py-3.5 px-4 text-right">
-                          {link ? (
-                            <a
-                              href={link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-lg bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-100"
-                            >
-                              Open ↗
-                            </a>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setUploadSubjectCode(sub.code);
-                                setActiveTab("upload");
-                              }}
-                              className="rounded-lg bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-slate-950 hover:bg-amber-300"
-                            >
-                              Upload File
-                            </button>
-                          )}
+                          <div className="flex items-center justify-end gap-1.5">
+                            {link ? (
+                              <>
+                                <a
+                                  href={link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="rounded-lg bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-100"
+                                >
+                                  Open ↗
+                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteNoteClick(sub.code)}
+                                  className="rounded-lg bg-red-50 border border-red-200 px-2 py-1 text-[11px] font-bold text-red-700 hover:bg-red-100"
+                                  title="Delete note and revert to Update shortly"
+                                >
+                                  🗑️ Delete
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setUploadSubjectCode(sub.code);
+                                  setActiveTab("upload");
+                                }}
+                                className="rounded-lg bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-slate-950 hover:bg-amber-300"
+                              >
+                                Upload File
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );

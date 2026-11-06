@@ -225,7 +225,7 @@ export function setSubjectDriveLink(
 }
 
 /**
- * Remove notes link for a subject
+ * Remove notes link for a subject locally
  */
 export function removeSubjectDriveLink(
   scheme: string,
@@ -245,6 +245,56 @@ export function removeSubjectDriveLink(
   } catch (err) {
     console.error("Error removing subject drive link:", err);
   }
+}
+
+/**
+ * Delete note from BOTH Google Drive cloud and local website
+ */
+export async function deleteNoteFromCloudAndLocal(params: {
+  scheme: string;
+  year: string;
+  branch: string;
+  semester: string;
+  subjectCode: string;
+  deleteDriveFiles?: boolean;
+}): Promise<{ status: "success" | "error"; message?: string }> {
+  // 1. Remove from local store immediately
+  removeSubjectDriveLink(
+    params.scheme,
+    params.year,
+    params.branch,
+    params.semester,
+    params.subjectCode
+  );
+
+  // 2. Call Google Apps Script to delete from cloud
+  const scriptUrl = getActiveAppsScriptUrl();
+  if (scriptUrl) {
+    try {
+      const res = await fetch(scriptUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "deleteNote",
+          scheme: params.scheme,
+          year: params.year,
+          branch: params.branch,
+          semester: params.semester,
+          subjectCode: params.subjectCode.trim().toUpperCase(),
+          deleteDriveFiles: Boolean(params.deleteDriveFiles),
+        }),
+      });
+      const data = await res.json();
+      if (data && data.status === "success") {
+        return { status: "success", message: data.message || "Note deleted successfully!" };
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn("Cloud delete request failed:", msg);
+    }
+  }
+
+  return { status: "success", message: "Note removed from website." };
 }
 
 /**
@@ -274,7 +324,7 @@ export function getEffectiveDriveLink(
 
 /**
  * Fetch latest notes map from Google Apps Script Web App
- * Supports both GET and POST requests for maximum compatibility.
+ * Supports both POST and GET with automatic deep merge.
  */
 export async function fetchNotesFromAppsScript(): Promise<boolean> {
   const scriptUrl = getActiveAppsScriptUrl();
@@ -289,48 +339,43 @@ export async function fetchNotesFromAppsScript(): Promise<boolean> {
 
   let data: ApiResponse | null = null;
 
-  // 1. Try GET request
+  // 1. Try POST first (most reliable, avoids CORS redirect errors)
   try {
-    const url = new URL(scriptUrl);
-    url.searchParams.set("action", "getNotes");
-    url.searchParams.set("t", Date.now().toString());
-
-    const res = await fetch(url.toString(), {
-      method: "GET",
-      mode: "cors",
+    const res = await fetch(scriptUrl, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "getNotes" }),
     });
 
     if (res.ok) {
       const text = await res.text();
       try {
         data = JSON.parse(text);
-      } catch {
-        // If Google Apps Script returned HTML error or redirect, fallback to POST
-      }
+      } catch {}
     }
   } catch (err) {
-    console.warn("GET getNotes attempt failed, falling back to POST:", err);
+    // Silently fall back to GET
   }
 
-  // 2. If GET did not succeed, try POST request fallback
-  if (!data || data.status !== "success") {
+  // 2. Fallback to GET if POST didn't return notes
+  if (!data || data.status !== "success" || !data.notes) {
     try {
-      const res = await fetch(scriptUrl, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "getNotes" }),
+      const url = new URL(scriptUrl);
+      url.searchParams.set("action", "getNotes");
+      url.searchParams.set("t", Date.now().toString());
+
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        mode: "cors",
       });
+
       if (res.ok) {
         const text = await res.text();
         try {
           data = JSON.parse(text);
-        } catch {
-          // not JSON
-        }
+        } catch {}
       }
-    } catch (err) {
-      console.warn("POST getNotes fallback attempt failed:", err);
-    }
+    } catch (err) {}
   }
 
   if (data && data.status === "success" && data.notes) {
@@ -429,8 +474,8 @@ export async function uploadNoteToGoogleDrive(params: {
     });
 
     const result = await res.json();
-    if (result && result.status === "success") {
-      // Save link locally
+    if (result && result.status === "success" && (result.folderUrl || result.fileUrl)) {
+      // Genuine upload success with Drive folder/file created
       const effectiveLink = result.folderUrl || result.fileUrl || "";
       if (effectiveLink) {
         setSubjectDriveLink(
@@ -447,6 +492,13 @@ export async function uploadNoteToGoogleDrive(params: {
         folderUrl: result.folderUrl,
         fileUrl: result.fileUrl,
         fileName: result.fileName,
+      };
+    } else if (result && result.status === "success" && !result.folderUrl && !result.fileUrl) {
+      // The old registration script returned generic success without saving to Drive
+      return {
+        status: "error",
+        message:
+          "Google Apps Script returned generic success but did NOT save to Drive. Your Apps Script is still running the old version. Please go to script.google.com -> Deploy -> Manage deployments -> Edit -> select 'New version' -> Deploy.",
       };
     } else {
       return {
@@ -504,7 +556,6 @@ async function fileToBase64(file: File): Promise<string> {
     reader.readAsDataURL(file);
     reader.onload = () => {
       const res = reader.result as string;
-      // remove data:application/pdf;base64, prefix
       const base64 = res.split(",")[1] || "";
       resolve(base64);
     };
@@ -549,4 +600,3 @@ async function syncDriveLinkToCloud(
     }),
   });
 }
-

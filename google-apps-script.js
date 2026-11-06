@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * VTUConnect & TechMiya EdTech — Google Apps Script Backend
+ * VTUConnect & TechMiya EdTech — Google Apps Script Backend (v2.1)
  * ============================================================================
  * 
  * Features:
@@ -8,27 +8,21 @@
  *    Creates: VTUConnect_Study_Notes / [Scheme] / [Year or Branch] / [Semester] / [Subject Code - Name]
  * 2. File Upload API:
  *    Directly uploads notes (PDF, PPT, DOCX, ZIP) from system to Drive.
- * 3. Dynamic Notes & Subject Indexer:
+ * 3. File & Subject Delete API:
+ *    Allows admin to delete / unlink notes from the frontend in real time.
+ * 4. Dynamic Notes & Subject Indexer:
  *    Serves notes and subject metadata via JSON API (GET & POST).
- * 4. Free Student Registration Handler:
+ * 5. Free Student Registration Handler:
  *    Backward compatible with existing student registration logging.
  * 
- * HOW TO DEPLOY:
- * 1. Open Google Drive (drive.google.com).
- * 2. Create or open a Google Sheet (e.g. "VTUConnect Master Database").
- * 3. Click Extensions → Apps Script.
- * 4. Replace ALL existing code with this file.
- * 5. Run the function "createDriveFolderStructure" ONCE from the editor to generate
- *    all folders in Google Drive automatically!
- * 6. Click "Deploy" (top right) → "New deployment".
- * 7. Click the Gear icon → Select "Web app".
- *    - Description: "VTUConnect Notes & Portal API"
- *    - Execute as: "Me" (your Google account)
- *    - Who has access: "Anyone" (Required so students & admin can access API)
- * 8. Click "Deploy" → "Authorize access" → Choose account → Advanced → "Go to Untitled project (unsafe)" → "Allow".
- * 9. Copy the Web app URL (ends in /exec) and paste it into:
- *    - Admin Portal Settings on your website, OR
- *    - src/config/app-config.ts -> APPS_SCRIPT_URL
+ * HOW TO DEPLOY (3 STEPS):
+ * 1. Open Google Sheets / Apps Script (script.google.com).
+ * 2. Delete ALL existing code in Code.gs and PASTE THIS ENTIRE FILE.
+ * 3. Click "Deploy" (top right) → "Manage deployments":
+ *    - Click the Pencil (Edit) icon
+ *    - Select Version: "New version"
+ *    - Set "Who has access": "Anyone"
+ *    - Click "Deploy"
  * ============================================================================
  */
 
@@ -40,38 +34,51 @@ function doGet(e) {
   try {
     var params = e ? e.parameter : {};
     var action = params.action || "getNotes";
+    var callback = params.callback;
 
     if (action === "getNotes") {
       var notesMap = getNotesRegistry();
       var customSubjects = getStoredSubjects();
       return jsonResponse({
         status: "success",
+        version: "2.1-delete-support",
         notes: notesMap,
         subjects: customSubjects,
         rootFolderUrl: getRootFolderUrl()
-      });
+      }, callback);
     }
 
     if (action === "getSubjects") {
       var subjects = getStoredSubjects();
-      return jsonResponse({ status: "success", subjects: subjects });
+      return jsonResponse({ status: "success", subjects: subjects }, callback);
     }
 
     if (action === "checkStatus") {
       return jsonResponse({
         status: "success",
+        version: "2.1-delete-support",
         rootFolderUrl: getRootFolderUrl(),
-        message: "VTUConnect Google Apps Script is active and connected!"
-      });
+        message: "VTUConnect Google Apps Script v2.1 is active and connected!"
+      }, callback);
+    }
+
+    if (action === "scanDrive") {
+      var scanRes = scanDriveFoldersAndIndex();
+      return jsonResponse({
+        status: "success",
+        indexedFolders: scanRes.indexedFolders,
+        notes: getNotesRegistry()
+      }, callback);
     }
 
     return jsonResponse({
       status: "success",
+      version: "2.1-delete-support",
       message: "VTUConnect Apps Script API is running.",
       timestamp: new Date().toISOString()
-    });
+    }, callback);
   } catch (err) {
-    return jsonResponse({ status: "error", error: err.toString() });
+    return jsonResponse({ status: "error", error: err.toString() }, params ? params.callback : null);
   }
 }
 
@@ -102,6 +109,7 @@ function doPost(e) {
       var customSubjects = getStoredSubjects();
       return jsonResponse({
         status: "success",
+        version: "2.1-delete-support",
         notes: notesMap,
         subjects: customSubjects,
         rootFolderUrl: getRootFolderUrl()
@@ -111,8 +119,18 @@ function doPost(e) {
     if (action === "checkStatus") {
       return jsonResponse({
         status: "success",
+        version: "2.1-delete-support",
         rootFolderUrl: getRootFolderUrl(),
-        message: "VTUConnect Google Apps Script is active and connected!"
+        message: "VTUConnect Google Apps Script v2.1 is active and connected!"
+      });
+    }
+
+    if (action === "scanDrive") {
+      var scanRes = scanDriveFoldersAndIndex();
+      return jsonResponse({
+        status: "success",
+        indexedFolders: scanRes.indexedFolders,
+        notes: getNotesRegistry()
       });
     }
 
@@ -121,21 +139,27 @@ function doPost(e) {
       return handleFileUpload(data);
     }
 
-    // 4. Add Custom Subject
+    // 4. Delete / Remove Note from frontend
+    if (action === "deleteNote") {
+      return handleDeleteNote(data);
+    }
+
+    // 5. Add Custom Subject
     if (action === "addSubject") {
       return handleAddSubject(data);
     }
 
-    // 5. Set or Update Drive Link for a Subject
+    // 6. Set or Update Drive Link for a Subject
     if (action === "setDriveLink") {
       return handleSetDriveLink(data);
     }
 
-    // 6. Create Entire Drive Folder Structure
+    // 7. Create Entire Drive Folder Structure
     if (action === "createStructure") {
       var root = createDriveFolderStructure();
       return jsonResponse({
         status: "success",
+        version: "2.1-delete-support",
         message: "Google Drive folder structure generated successfully!",
         rootFolderUrl: root ? root.getUrl() : ""
       });
@@ -175,9 +199,7 @@ function handleFileUpload(data) {
   try {
     createdFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     subjectFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  } catch (shareErr) {
-    // Sharing might inherit or require domain settings
-  }
+  } catch (shareErr) {}
 
   var folderUrl = subjectFolder.getUrl();
   var fileUrl = createdFile.getUrl();
@@ -187,10 +209,61 @@ function handleFileUpload(data) {
 
   return jsonResponse({
     status: "success",
+    version: "2.1-delete-support",
     message: "Note uploaded successfully to Google Drive!",
     folderUrl: folderUrl,
     fileUrl: fileUrl,
     fileName: fileName
+  });
+}
+
+// ── DELETE NOTE HANDLER ──────────────────────────────────────────────────────
+function handleDeleteNote(data) {
+  var scheme = data.scheme || "2025 Scheme";
+  var year = data.year || "Second Year";
+  var branch = data.branch || "Computer Science and Engineering (CSE)";
+  var semester = data.semester || "Semester 3";
+  var subjectCode = (data.subjectCode || "").toUpperCase().trim();
+
+  var branchKey = (year === "First Year") ? "First Year" : branch;
+  var key = "NOTE_" + cleanKey(scheme) + "_" + cleanKey(branchKey) + "_" + cleanKey(semester) + "_" + cleanKey(subjectCode);
+
+  var props = PropertiesService.getScriptProperties();
+  props.deleteProperty(key);
+
+  // Remove from index
+  var indexRaw = props.getProperty("NOTES_INDEX") || "[]";
+  var index = [];
+  try { index = JSON.parse(indexRaw); } catch (e) { index = []; }
+
+  index = index.filter(function(i) {
+    return !(
+      i.scheme === scheme &&
+      i.branch === branchKey &&
+      i.semester === semester &&
+      i.subjectCode === subjectCode
+    );
+  });
+  props.setProperty("NOTES_INDEX", JSON.stringify(index));
+
+  // If requested, also trash files in that subject's Drive folder
+  if (data.deleteDriveFiles) {
+    try {
+      var subjectFolder = getSubjectFolderIfExists(scheme, year, branch, semester, subjectCode);
+      if (subjectFolder) {
+        var files = subjectFolder.getFiles();
+        while (files.hasNext()) {
+          files.next().setTrashed(true);
+        }
+      }
+    } catch (trashErr) {}
+  }
+
+  return jsonResponse({
+    status: "success",
+    version: "2.1-delete-support",
+    message: "Note deleted successfully for " + subjectCode + "! Status will revert to 'Update shortly'.",
+    subjectCode: subjectCode
   });
 }
 
@@ -237,7 +310,6 @@ function getOrCreateSubjectFolder(scheme, year, branch, semester, subjectCode, s
     folderDisplayName = subjectCode + " - " + subjectName;
   }
 
-  // Check if subject folder exists with either subjectCode or subjectCode - subjectName
   var existing = semFolder.getFolders();
   while (existing.hasNext()) {
     var f = existing.next();
@@ -248,6 +320,31 @@ function getOrCreateSubjectFolder(scheme, year, branch, semester, subjectCode, s
   }
 
   return getOrCreateSubFolder(semFolder, folderDisplayName);
+}
+
+function getSubjectFolderIfExists(scheme, year, branch, semester, subjectCode) {
+  var root = getOrCreateRootFolder();
+  var schemes = root.getFoldersByName(scheme);
+  if (!schemes.hasNext()) return null;
+  var scFolder = schemes.next();
+
+  var branchOrYear = (year === "First Year") ? "First Year" : branch;
+  var branches = scFolder.getFoldersByName(branchOrYear);
+  if (!branches.hasNext()) return null;
+  var brFolder = branches.next();
+
+  var semesters = brFolder.getFoldersByName(semester);
+  if (!semesters.hasNext()) return null;
+  var semFolder = semesters.next();
+
+  var folders = semFolder.getFolders();
+  while (folders.hasNext()) {
+    var f = folders.next();
+    if (f.getName().toUpperCase().indexOf(subjectCode) !== -1) {
+      return f;
+    }
+  }
+  return null;
 }
 
 function getRootFolderUrl() {
@@ -268,7 +365,6 @@ function saveNoteLink(scheme, year, branch, semester, subjectCode, link) {
   var props = PropertiesService.getScriptProperties();
   props.setProperty(key, link);
 
-  // Also maintain index list
   var indexRaw = props.getProperty("NOTES_INDEX") || "[]";
   var index = [];
   try { index = JSON.parse(indexRaw); } catch (e) { index = []; }
@@ -293,6 +389,15 @@ function getNotesRegistry() {
   var index = [];
   try { index = JSON.parse(indexRaw); } catch (e) { index = []; }
 
+  // If index is currently empty, automatically scan Drive folders to index existing notes
+  if (index.length === 0) {
+    try {
+      scanDriveFoldersAndIndex();
+      indexRaw = props.getProperty("NOTES_INDEX") || "[]";
+      try { index = JSON.parse(indexRaw); } catch (e) { index = []; }
+    } catch (scanErr) {}
+  }
+
   var notesMap = {};
   for (var i = 0; i < index.length; i++) {
     var item = index[i];
@@ -302,6 +407,50 @@ function getNotesRegistry() {
     notesMap[item.scheme][item.branch][item.semester][item.subjectCode] = item.link;
   }
   return notesMap;
+}
+
+// ── AUTOMATIC DRIVE FOLDER SCANNER ──────────────────────────────────────────
+function scanDriveFoldersAndIndex() {
+  var root = getOrCreateRootFolder();
+  var count = 0;
+
+  var schemes = root.getFolders();
+  while (schemes.hasNext()) {
+    var scFolder = schemes.next();
+    var scName = scFolder.getName();
+
+    var branches = scFolder.getFolders();
+    while (branches.hasNext()) {
+      var brFolder = branches.next();
+      var brName = brFolder.getName();
+
+      var semesters = brFolder.getFolders();
+      while (semesters.hasNext()) {
+        var semFolder = semesters.next();
+        var semName = semFolder.getName();
+
+        var subjects = semFolder.getFolders();
+        while (subjects.hasNext()) {
+          var subFolder = subjects.next();
+          var subFolderName = subFolder.getName();
+          var parts = subFolderName.split(" - ");
+          var subCode = parts[0].trim().toUpperCase();
+
+          saveNoteLink(
+            scName,
+            brName === "First Year" ? "First Year" : "Other",
+            brName,
+            semName,
+            subCode,
+            subFolder.getUrl()
+          );
+          count++;
+        }
+      }
+    }
+  }
+
+  return { status: "success", indexedFolders: count };
 }
 
 function handleSetDriveLink(data) {
@@ -316,7 +465,6 @@ function handleAddSubject(data) {
   var subjects = [];
   try { subjects = JSON.parse(subjectsRaw); } catch (e) { subjects = []; }
 
-  // Check duplicate
   var exists = false;
   for (var i = 0; i < subjects.length; i++) {
     if (subjects[i].scheme === sub.scheme &&
@@ -334,7 +482,6 @@ function handleAddSubject(data) {
   }
   props.setProperty("CUSTOM_SUBJECTS", JSON.stringify(subjects));
 
-  // Automatically create its Google Drive folder as well!
   var folder = getOrCreateSubjectFolder(sub.scheme, sub.year, sub.branch, sub.semester, sub.code, sub.name);
   if (sub.driveLink) {
     saveNoteLink(sub.scheme, sub.year, sub.branch, sub.semester, sub.code, sub.driveLink);
@@ -371,7 +518,6 @@ function handleStudentRegistration(data) {
   var college   = data.college || "";
 
   if (sheet) {
-    // If empty sheet, set headers
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(["Timestamp", "Full Name", "Mobile Number", "Email", "College"]);
     }
@@ -385,22 +531,22 @@ function cleanKey(str) {
   return String(str || "").replace(/[^a-zA-Z0-9]/g, "_").toUpperCase();
 }
 
-function jsonResponse(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj))
+function jsonResponse(obj, callback) {
+  var jsonStr = JSON.stringify(obj);
+  if (callback) {
+    return ContentService.createTextOutput(callback + "(" + jsonStr + ");")
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService.createTextOutput(jsonStr)
     .setMimeType(ContentService.MimeType.JSON);
 }
 
 // ── FULL DRIVE STRUCTURE INITIALIZER (ONE-CLICK EXECUTION) ──────────────────
-/**
- * Run this function directly in Apps Script or trigger it from Admin Portal
- * to automatically build the entire VTU Study Notes folder tree in Google Drive!
- */
 function createDriveFolderStructure() {
   var root = getOrCreateRootFolder();
 
   var schemes = ["2025 Scheme", "2022 Scheme", "2021 Scheme", "2018 Scheme"];
 
-  // Core curriculum definitions
   var physicsCycle = [
     { code: "BMA101", name: "Engineering Mathematics - I" },
     { code: "BPH102", name: "Engineering Physics" },
@@ -455,9 +601,11 @@ function createDriveFolderStructure() {
       { code: "BCS603", name: "Cloud Computing" }
     ],
     "Semester 7": [
-      { code: "BCS701", name: "Internet of Things" },
-      { code: "BCS702", name: "Information & Network Security" },
-      { code: "BCS703", name: "Blockchain Technology" }
+      { code: "BCS701", name: "Cryptography & Network Security" },
+      { code: "BCS702", name: "Deep Learning" },
+      { code: "BCS703A", name: "Elective III: Blockchain Technology" },
+      { code: "BCS703B", name: "Elective III: Software Testing" },
+      { code: "BCS703C", name: "Elective III: Distributed Systems" }
     ],
     "Semester 8": [
       { code: "BCS801", name: "Project Work Phase - II" },
@@ -465,12 +613,10 @@ function createDriveFolderStructure() {
     ]
   };
 
-  // Build Scheme 2025 (and others)
   for (var s = 0; s < schemes.length; s++) {
     var scName = schemes[s];
     var scFolder = getOrCreateSubFolder(root, scName);
 
-    // 1st Year
     var firstYearFolder = getOrCreateSubFolder(scFolder, "First Year");
     var physFolder = getOrCreateSubFolder(firstYearFolder, "Physics Cycle");
     for (var p = 0; p < physicsCycle.length; p++) {
@@ -484,7 +630,6 @@ function createDriveFolderStructure() {
       saveNoteLink(scName, "First Year", "First Year", "Chemistry Cycle", chemistryCycle[c].code, cf.getUrl());
     }
 
-    // Branch Folders
     for (var b = 0; b < sampleBranches.length; b++) {
       var brName = sampleBranches[b];
       var brFolder = getOrCreateSubFolder(scFolder, brName);
@@ -494,7 +639,6 @@ function createDriveFolderStructure() {
         var semName = semKeys[k];
         var semFolder = getOrCreateSubFolder(brFolder, semName);
 
-        // For CSE and AIML, pre-populate subjects
         if (brName.indexOf("CSE") !== -1 || brName.indexOf("Computer") !== -1) {
           var subs = cseSubjects[semName];
           for (var u = 0; u < subs.length; u++) {
@@ -509,4 +653,3 @@ function createDriveFolderStructure() {
   Logger.log("Folder hierarchy created! Root folder link: " + root.getUrl());
   return root;
 }
-
